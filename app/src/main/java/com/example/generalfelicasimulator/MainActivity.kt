@@ -82,8 +82,14 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        val org_sys = nfcFCardEmulation?.getSystemCodeForService(myComponentName)
+
         if (setSys("1234")) {
             findViewById<TextView>(R.id.textViewNoticeUnUnlocked).visibility = View.INVISIBLE
+        }
+
+        if (org_sys != null) {
+            setSys(org_sys)
         }
 
         nfcFCardEmulation?.enableService(this, myComponentName)
