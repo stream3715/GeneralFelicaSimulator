@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.nfc.cardemulation.NfcFCardEmulation
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -91,5 +92,25 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         nfcFCardEmulation?.disableService(this)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+        super.onSaveInstanceState(outState, outPersistentState)
+
+        val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
+        val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
+
+        outState.putString("IDm", idm)
+        outState.putString("Sys", sys)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        val idm = savedInstanceState.getString("IDm")
+        val sys = savedInstanceState.getString("Sys")
+
+        findViewById<EditText>(R.id.editTextIDm).setText(idm)
+        findViewById<EditText>(R.id.editTextSys).setText(sys)
     }
 }
