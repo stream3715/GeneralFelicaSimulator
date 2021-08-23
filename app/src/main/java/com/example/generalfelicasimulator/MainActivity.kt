@@ -44,24 +44,36 @@ class MainActivity : AppCompatActivity() {
             val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
             val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
 
-            nfcFCardEmulation?.disableService(this)
-            val result_idm = nfcFCardEmulation?.setNfcid2ForService(myComponentName, idm)
-            val result_sys = nfcFCardEmulation?.registerSystemCodeForService(myComponentName, sys)
-            nfcFCardEmulation?.enableService(this, myComponentName)
+            val result_idm = setIDm(idm)
+            val result_sys = setSys(sys)
 
-            if (result_idm == true && result_sys == true) {
+            if (result_idm && result_sys) {
                 Toast.makeText(applicationContext, "Updated: $idm $sys", Toast.LENGTH_LONG).show()
             } else {
-                if (result_idm == false) {
+                if (!result_idm) {
                     Toast.makeText(applicationContext, "Error. Invalid IDm", Toast.LENGTH_LONG)
                         .show()
                 }
-                if (result_sys == false) {
+                if (!result_sys) {
                     Toast.makeText(applicationContext, "Error. Invalid Sys", Toast.LENGTH_LONG)
                         .show()
                 }
             }
         }
+    }
+
+    fun setIDm(idm: String): Boolean {
+        nfcFCardEmulation?.disableService(this)
+        val result_idm = nfcFCardEmulation?.setNfcid2ForService(myComponentName, idm)
+        nfcFCardEmulation?.enableService(this, myComponentName)
+        return result_idm == true
+    }
+
+    fun setSys(sys: String): Boolean {
+        nfcFCardEmulation?.disableService(this)
+        val result_sys = nfcFCardEmulation?.registerSystemCodeForService(myComponentName, sys)
+        nfcFCardEmulation?.enableService(this, myComponentName)
+        return result_sys == true
     }
 
     override fun onResume() {
