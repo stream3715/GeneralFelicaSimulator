@@ -7,8 +7,10 @@ import android.nfc.NfcAdapter
 import android.nfc.cardemulation.NfcFCardEmulation
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlin.system.exitProcess
@@ -78,6 +80,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+
+        if (setSys("1234")) {
+            findViewById<TextView>(R.id.textViewNoticeUnUnlocked).visibility = View.INVISIBLE
+        }
+
         nfcFCardEmulation?.enableService(this, myComponentName)
     }
 
