@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">GeneralFelicaSimulator</string>
+    <string name="service_desc">Simulate Felica Generally</string>
 </resources>
