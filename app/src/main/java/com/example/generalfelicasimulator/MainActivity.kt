@@ -39,9 +39,6 @@ class MainActivity : AppCompatActivity() {
             "com.example.generalfelicasimulator.HCEFService"
         )
 
-        nfcFCardEmulation?.setNfcid2ForService(myComponentName, "02FE000000000000")
-        nfcFCardEmulation?.registerSystemCodeForService(myComponentName, "4000")
-
         val btn_update = findViewById<Button>(R.id.button_update)
         btn_update.setOnClickListener {
             val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
