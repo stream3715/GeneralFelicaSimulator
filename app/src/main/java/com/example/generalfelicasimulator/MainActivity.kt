@@ -8,6 +8,7 @@ import android.nfc.cardemulation.NfcFCardEmulation
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
@@ -20,7 +21,8 @@ class MainActivity : AppCompatActivity() {
 
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
             Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
-            AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported").show()
+            AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported")
+                .setOnDismissListener { exitProcess(-1) }.show()
             return
         }
 
