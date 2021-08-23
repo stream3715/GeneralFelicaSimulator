@@ -10,9 +10,9 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var nfcAdapter: NfcAdapter
-    private lateinit var nfcFCardEmulation: NfcFCardEmulation
-    private lateinit var myComponentName: ComponentName
+    private var nfcAdapter: NfcAdapter? = null
+    private var nfcFCardEmulation: NfcFCardEmulation? = null
+    private var myComponentName: ComponentName? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
             Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
             AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported").show()
+            return
         }
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
@@ -30,17 +31,17 @@ class MainActivity : AppCompatActivity() {
             "com.example.generalfelicasimulator.HCEFService"
         )
 
-        nfcFCardEmulation.setNfcid2ForService(myComponentName,"02FE000000000000")
-        nfcFCardEmulation.registerSystemCodeForService(myComponentName,"4000")
+        nfcFCardEmulation?.setNfcid2ForService(myComponentName, "02FE000000000000")
+        nfcFCardEmulation?.registerSystemCodeForService(myComponentName, "4000")
     }
 
     override fun onResume() {
         super.onResume()
-        nfcFCardEmulation.enableService(this, myComponentName)
+        nfcFCardEmulation?.enableService(this, myComponentName)
     }
 
     override fun onPause() {
         super.onPause()
-        nfcFCardEmulation.disableService(this)
+        nfcFCardEmulation?.disableService(this)
     }
 }
