@@ -62,14 +62,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun setIDm(idm: String): Boolean {
+    private fun setIDm(idm: String): Boolean {
         nfcFCardEmulation?.disableService(this)
         val result_idm = nfcFCardEmulation?.setNfcid2ForService(myComponentName, idm)
         nfcFCardEmulation?.enableService(this, myComponentName)
         return result_idm == true
     }
 
-    fun setSys(sys: String): Boolean {
+    private fun setSys(sys: String): Boolean {
         nfcFCardEmulation?.disableService(this)
         val result_sys = nfcFCardEmulation?.registerSystemCodeForService(myComponentName, sys)
         nfcFCardEmulation?.enableService(this, myComponentName)
