@@ -20,17 +20,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:ems="10"
-        android:text="@string/default_idm"
-        android:hint="IDm"
+        android:autofillHints=""
         android:digits="0123456789ABCDEFabcdef"
+        android:ems="10"
+        android:hint="IDm"
         android:inputType="textCapCharacters"
         android:maxLength="16"
         android:minHeight="48dp"
+        android:text="@string/default_idm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:autofillHints="" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/editTextSys"
@@ -38,9 +38,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:autofillHints=""
+        android:digits="0123456789ABCDEFabcdef"
         android:ems="10"
         android:hint="Sys"
-        android:digits="0123456789ABCDEFabcdef"
         android:inputType="textCapCharacters"
         android:maxLength="4"
         android:minHeight="48dp"
@@ -78,7 +78,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextSys" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
