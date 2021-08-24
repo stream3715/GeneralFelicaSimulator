@@ -14,9 +14,9 @@ System Code: `4XXX` (except `4XFF`s)
 
 Reference: HCE-F Guideline Chapter 2.4
 
-[HCE-F Guideline (Sony)][5]
+[Host-based Card Emulation for NFC-F Application Development Guidelines (Sony)][5]
 
-[Japanese Ver][7]
+[(Japanese Ver) Host-based Card Emulation for NFC-F アプリケーション開発ガイドライン][7]
 
 # How to Unlock HCE-F
 Xposed Module [HCEFUnlocker][10] (Need Root)
