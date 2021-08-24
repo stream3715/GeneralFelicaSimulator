@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                         .show()
                 }
                 if (!result_sys) {
-                    Toast.makeText(applicationContext, "Error. Invalid Sys", Toast.LENGTH_LONG)
+                    Toast.makeText(applicationContext, "Error. Invalid System Code", Toast.LENGTH_LONG)
                         .show()
                 }
             }
