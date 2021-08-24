@@ -10,7 +10,7 @@
         android:id="@+id/textViewNoticeUnUnlocked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This device is not Unlocked."
+        android:text="@string/ununlocked_notice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
