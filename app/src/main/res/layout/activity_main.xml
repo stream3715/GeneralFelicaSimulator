@@ -34,7 +34,7 @@
 
     <EditText
         android:id="@+id/editTextSys"
-        android:layout_width="50sp"
+        android:layout_width="55sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:autofillHints=""
