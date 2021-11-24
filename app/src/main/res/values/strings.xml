@@ -8,4 +8,6 @@
     <string name="sys">Sys</string>
     <string name="system_code">System Code</string>
     <string name="update">UPDATE</string>
+    <string name="save">SAVE</string>
+    <string name="card_delete_description">Delete Card</string>
 </resources>
