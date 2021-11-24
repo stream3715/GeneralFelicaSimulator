@@ -8,17 +8,29 @@ import android.nfc.cardemulation.NfcFCardEmulation
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import java.io.File
+import java.io.IOException
 import kotlin.system.exitProcess
+
+
+data class Card(val name: String, val idm: String, val sys: String) //TODO CHECK VALUES
+
 
 class MainActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private var nfcFCardEmulation: NfcFCardEmulation? = null
     private var myComponentName: ComponentName? = null
+
+    private val gson = Gson()
+    private var cards = mutableListOf<Card>()
+
+    private val jsonPath = "cards.json"
+    private lateinit var jsonFile: File
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,54 +50,151 @@ class MainActivity : AppCompatActivity() {
             "com.example.generalfelicasimulator.HCEFService"
         )
 
-        val btn_update = findViewById<Button>(R.id.button_update)
-        btn_update.setOnClickListener {
+        val btnUpdate = findViewById<Button>(R.id.button_update)
+        btnUpdate.setOnClickListener {
             val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
             val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
 
-            val result_idm = setIDm(idm)
-            val result_sys = setSys(sys)
+            val resultIdm = setIDm(idm)
+            val resultSys = setSys(sys)
 
-            if (result_idm && result_sys) {
+            if (resultIdm && resultSys) {
                 Toast.makeText(applicationContext, "Updated: $idm $sys", Toast.LENGTH_LONG).show()
             } else {
-                if (!result_idm) {
+                if (!resultIdm) {
                     Toast.makeText(applicationContext, "Error. Invalid IDm", Toast.LENGTH_LONG)
                         .show()
                 }
-                if (!result_sys) {
-                    Toast.makeText(applicationContext, "Error. Invalid System Code", Toast.LENGTH_LONG)
+                if (!resultSys) {
+                    Toast.makeText(
+                        applicationContext,
+                        "Error. Invalid System Code",
+                        Toast.LENGTH_LONG
+                    )
                         .show()
                 }
             }
         }
+
+        val btnSave = findViewById<Button>(R.id.button_save)
+        btnSave.setOnClickListener {
+            val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
+            val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
+
+            val editTextName = EditText(this)
+            editTextName.hint = "name"
+
+            AlertDialog.Builder(this)
+                .setTitle("Save (beta)")
+                .setMessage("input card name")
+                .setView(editTextName)
+                .setPositiveButton("OK") { _, _ ->
+                    addCard(Card(editTextName.text.toString(), idm, sys))
+                }
+                .show()
+        }
+
+        jsonFile = File(filesDir, jsonPath)
+
+        loadCards()
+        drawCards()
     }
 
     private fun setIDm(idm: String): Boolean {
         nfcFCardEmulation?.disableService(this)
-        val result_idm = nfcFCardEmulation?.setNfcid2ForService(myComponentName, idm)
+        val resultIdm = nfcFCardEmulation?.setNfcid2ForService(myComponentName, idm)
         nfcFCardEmulation?.enableService(this, myComponentName)
-        return result_idm == true
+        return resultIdm == true
     }
 
     private fun setSys(sys: String): Boolean {
         nfcFCardEmulation?.disableService(this)
-        val result_sys = nfcFCardEmulation?.registerSystemCodeForService(myComponentName, sys)
+        val resultSys = nfcFCardEmulation?.registerSystemCodeForService(myComponentName, sys)
         nfcFCardEmulation?.enableService(this, myComponentName)
-        return result_sys == true
+        return resultSys == true
+    }
+
+    private fun addCard(card: Card) {
+        cards.add(card)
+        saveCards()
+        drawCards()
+    }
+
+    private fun saveCards() {
+        try {
+            jsonFile.writeText(gson.toJson(cards).toString())
+        } catch (e: IOException) {
+            Log.e("Error", "Json File Write Error")
+        }
+    }
+
+    private fun loadCards() {
+        val mutableListCard = object : TypeToken<MutableList<Card>>() {}.type
+        try {
+            val jsonCards = gson.fromJson<MutableList<Card>>(jsonFile.readText(), mutableListCard)
+            if (jsonCards != null) {
+                cards = jsonCards
+            }
+        } catch (e: IOException) {
+            Log.e("Error", "Json File Read Error")
+        }
+    }
+
+    private fun drawCards() {
+        val tableLayoutCard = findViewById<TableLayout>(R.id.tableLayoutCard)
+
+        tableLayoutCard.removeAllViews()
+
+        var i = 1
+
+        for (card in cards) {
+            val tableRowCard = layoutInflater.inflate(R.layout.table_row_card, null)
+
+            var name = card.name
+
+            if (name == "") {
+                name = "Untitled"
+                if (i > 1) {
+                    name += " $i"
+                }
+                i++
+            }
+
+            tableRowCard.findViewById<TextView>(R.id.card_name).text = name
+            tableRowCard.findViewById<TextView>(R.id.card_idm).text = card.idm
+            tableRowCard.findViewById<TextView>(R.id.card_sys).text = card.sys
+            tableRowCard.findViewById<ImageButton>(R.id.card_delete)
+                .setOnClickListener {
+                    cards.removeAt(cards.indexOf(card))
+                    saveCards()
+                    drawCards()
+                }
+            tableRowCard.setOnClickListener {
+                findViewById<EditText>(R.id.editTextIDm).setText(card.idm)
+                findViewById<EditText>(R.id.editTextSys).setText(card.sys)
+            }
+
+            tableLayoutCard.addView(
+                tableRowCard,
+                TableLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+        }
     }
 
     override fun onResume() {
         super.onResume()
 
-        val org_sys = nfcFCardEmulation?.getSystemCodeForService(myComponentName)
+        val orgSys = nfcFCardEmulation?.getSystemCodeForService(myComponentName)
 
         if (setSys("1234")) {
             findViewById<TextView>(R.id.textViewNoticeUnUnlocked).visibility = View.INVISIBLE
         }
 
-        if (org_sys != null) {
-            setSys(org_sys)
+        if (orgSys != null) {
+            setSys(orgSys)
         }
 
         nfcFCardEmulation?.enableService(this, myComponentName)

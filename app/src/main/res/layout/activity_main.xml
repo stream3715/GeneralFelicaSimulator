@@ -20,10 +20,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:autofillHints=""
+        android:autofillHints="@string/default_idm"
         android:digits="0123456789ABCDEFabcdef"
         android:ems="10"
-        android:hint="IDm"
+        android:hint="@string/idm"
         android:inputType="textCapCharacters"
         android:maxLength="16"
         android:minHeight="48dp"
@@ -37,10 +37,10 @@
         android:layout_width="55sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:autofillHints=""
+        android:autofillHints="@string/default_sys"
         android:digits="0123456789ABCDEFabcdef"
         android:ems="10"
-        android:hint="Sys"
+        android:hint="@string/sys"
         android:inputType="textCapCharacters"
         android:maxLength="4"
         android:minHeight="48dp"
@@ -54,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="IDm"
+        android:text="@string/idm"
         app:layout_constraintEnd_toStartOf="@+id/editTextIDm"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -64,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="System Code"
+        android:text="@string/system_code"
         app:layout_constraintEnd_toStartOf="@+id/editTextSys"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextIDm" />
@@ -74,10 +74,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="UPDATE"
+        android:text="@string/update"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextSys" />
 
+    <Button
+        android:id="@+id/button_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/save"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_update" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="300dp"
+        android:isScrollContainer="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_save">
+
+        <TableLayout
+            android:id="@+id/tableLayoutCard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
