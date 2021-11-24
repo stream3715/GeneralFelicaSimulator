@@ -145,10 +145,22 @@ class MainActivity : AppCompatActivity() {
 
         tableLayoutCard.removeAllViews()
 
+        var i = 1
+
         for (card in cards) {
             val tableRowCard = layoutInflater.inflate(R.layout.table_row_card, null)
 
-            tableRowCard.findViewById<TextView>(R.id.card_name).text = card.name
+            var name = card.name
+
+            if (name == "") {
+                name = "Untitled"
+                if (i > 1) {
+                    name += " $i"
+                }
+                i++
+            }
+
+            tableRowCard.findViewById<TextView>(R.id.card_name).text = name
             tableRowCard.findViewById<TextView>(R.id.card_idm).text = card.idm
             tableRowCard.findViewById<TextView>(R.id.card_sys).text = card.sys
             tableRowCard.findViewById<ImageButton>(R.id.card_delete)
