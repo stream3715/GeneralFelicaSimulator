@@ -10,4 +10,6 @@
     <string name="update">UPDATE</string>
     <string name="save">SAVE</string>
     <string name="card_delete_description">Delete Card</string>
+    <string name="error_invalid">Error. Invalid</string>
+    <string name="untitled">"Untitled</string>
 </resources>

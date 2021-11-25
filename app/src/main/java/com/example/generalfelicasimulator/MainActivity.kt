@@ -12,19 +12,24 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.IOException
-import kotlin.system.exitProcess
 
 
-data class Card(val name: String, val idm: String, val sys: String) //TODO CHECK VALUES
+data class Card(val name: String, val idm: String, val sys: String)
 
 
 class MainActivity : AppCompatActivity() {
     private var nfcAdapter: NfcAdapter? = null
     private var nfcFCardEmulation: NfcFCardEmulation? = null
     private var myComponentName: ComponentName? = null
+
+    private lateinit var editTextIDm: EditText
+    private lateinit var editTextSys: EditText
+
+    private lateinit var tableLayoutCard: TableLayout
 
     private val gson = Gson()
     private var cards = mutableListOf<Card>()
@@ -36,56 +41,50 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
-            Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
-            AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported")
-                .setOnDismissListener { exitProcess(-1) }.show()
-            return
-        }
+        editTextIDm = findViewById(R.id.editTextIDm)
+        editTextSys = findViewById(R.id.editTextSys)
 
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-        nfcFCardEmulation = NfcFCardEmulation.getInstance(nfcAdapter)
-        myComponentName = ComponentName(
-            "com.example.generalfelicasimulator",
-            "com.example.generalfelicasimulator.HCEFService"
-        )
+        tableLayoutCard = findViewById(R.id.tableLayoutCard)
 
         val btnUpdate = findViewById<Button>(R.id.button_update)
         btnUpdate.setOnClickListener {
-            val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
-            val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
+            val idm = editTextIDm.text.toString()
+            val sys = editTextSys.text.toString()
 
             val resultIdm = setIDm(idm)
             val resultSys = setSys(sys)
 
             if (resultIdm && resultSys) {
                 Toast.makeText(applicationContext, "Updated: $idm $sys", Toast.LENGTH_LONG).show()
-            } else {
-                if (!resultIdm) {
-                    Toast.makeText(applicationContext, "Error. Invalid IDm", Toast.LENGTH_LONG)
-                        .show()
-                }
-                if (!resultSys) {
-                    Toast.makeText(
-                        applicationContext,
-                        "Error. Invalid System Code",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
-                }
+            }
+            if (!resultIdm) {
+                Toast.makeText(
+                    applicationContext,
+                    "${getString(R.string.error_invalid)} ${getString(R.string.idm)}",
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            }
+            if (!resultSys) {
+                Toast.makeText(
+                    applicationContext,
+                    "${getString(R.string.error_invalid)} ${getString(R.string.system_code)}",
+                    Toast.LENGTH_LONG
+                )
+                    .show()
             }
         }
 
         val btnSave = findViewById<Button>(R.id.button_save)
         btnSave.setOnClickListener {
-            val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
-            val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
+            val idm = editTextIDm.text.toString()
+            val sys = editTextSys.text.toString()
 
             val editTextName = EditText(this)
             editTextName.hint = "name"
 
             AlertDialog.Builder(this)
-                .setTitle("Save (beta)")
+                .setTitle("Save")
                 .setMessage("input card name")
                 .setView(editTextName)
                 .setPositiveButton("OK") { _, _ ->
@@ -98,6 +97,19 @@ class MainActivity : AppCompatActivity() {
 
         loadCards()
         drawCards()
+
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
+            Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
+            AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported").show()
+            return
+        }
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        nfcFCardEmulation = NfcFCardEmulation.getInstance(nfcAdapter)
+        myComponentName = ComponentName(
+            "com.example.generalfelicasimulator",
+            "com.example.generalfelicasimulator.HCEFService"
+        )
     }
 
     private fun setIDm(idm: String): Boolean {
@@ -124,7 +136,7 @@ class MainActivity : AppCompatActivity() {
         try {
             jsonFile.writeText(gson.toJson(cards).toString())
         } catch (e: IOException) {
-            Log.e("Error", "Json File Write Error")
+            Log.e("Error", "Save File Write Error")
         }
     }
 
@@ -136,13 +148,13 @@ class MainActivity : AppCompatActivity() {
                 cards = jsonCards
             }
         } catch (e: IOException) {
-            Log.e("Error", "Json File Read Error")
+            Log.e("Error", "Save File Read Error")
+        } catch (e: JsonSyntaxException) {
+            Log.e("Error", "Save File Syntax Error")
         }
     }
 
     private fun drawCards() {
-        val tableLayoutCard = findViewById<TableLayout>(R.id.tableLayoutCard)
-
         tableLayoutCard.removeAllViews()
 
         var i = 1
@@ -153,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             var name = card.name
 
             if (name == "") {
-                name = "Untitled"
+                name = getString(R.string.untitled)
                 if (i > 1) {
                     name += " $i"
                 }
@@ -170,8 +182,8 @@ class MainActivity : AppCompatActivity() {
                     drawCards()
                 }
             tableRowCard.setOnClickListener {
-                findViewById<EditText>(R.id.editTextIDm).setText(card.idm)
-                findViewById<EditText>(R.id.editTextSys).setText(card.sys)
+                editTextIDm.setText(card.idm)
+                editTextSys.setText(card.sys)
             }
 
             tableLayoutCard.addView(
@@ -208,8 +220,8 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
-        val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
+        val idm = editTextIDm.text.toString()
+        val sys = editTextSys.text.toString()
 
         outState.putString("IDm", idm)
         outState.putString("Sys", sys)
@@ -221,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         val idm = savedInstanceState.getString("IDm")
         val sys = savedInstanceState.getString("Sys")
 
-        findViewById<EditText>(R.id.editTextIDm).setText(idm)
-        findViewById<EditText>(R.id.editTextSys).setText(sys)
+        editTextIDm.setText(idm)
+        editTextSys.setText(sys)
     }
 }

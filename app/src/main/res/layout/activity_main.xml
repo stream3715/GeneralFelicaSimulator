@@ -34,7 +34,7 @@
 
     <EditText
         android:id="@+id/editTextSys"
-        android:layout_width="55sp"
+        android:layout_width="60sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:autofillHints="@string/default_sys"
@@ -101,7 +101,7 @@
 
         <TableLayout
             android:id="@+id/tableLayoutCard"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </ScrollView>
 
