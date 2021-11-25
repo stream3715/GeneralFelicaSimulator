@@ -138,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         try {
             jsonFile.writeText(gson.toJson(cards).toString())
         } catch (e: IOException) {
-            Log.e("Error", "Json File Write Error")
+            Log.e("Error", "Save File Write Error")
         }
     }
 
@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity() {
                 cards = jsonCards
             }
         } catch (e: IOException) {
-            Log.e("Error", "Json File Read Error")
+            Log.e("Error", "Save File Read Error")
         }
     }
 
