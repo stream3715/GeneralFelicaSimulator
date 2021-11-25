@@ -85,7 +85,7 @@ class MainActivity : AppCompatActivity() {
             editTextName.hint = "name"
 
             AlertDialog.Builder(this)
-                .setTitle("Save (beta)")
+                .setTitle("Save")
                 .setMessage("input card name")
                 .setView(editTextName)
                 .setPositiveButton("OK") { _, _ ->
