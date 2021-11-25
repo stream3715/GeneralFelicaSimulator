@@ -18,7 +18,7 @@ import java.io.IOException
 import kotlin.system.exitProcess
 
 
-data class Card(val name: String, val idm: String, val sys: String) //TODO CHECK VALUES
+data class Card(val name: String, val idm: String, val sys: String)
 
 
 class MainActivity : AppCompatActivity() {
