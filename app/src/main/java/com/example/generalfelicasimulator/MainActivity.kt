@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.IOException
@@ -149,6 +150,8 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (e: IOException) {
             Log.e("Error", "Save File Read Error")
+        } catch (e: JsonSyntaxException) {
+            Log.e("Error", "Save File Syntax Error")
         }
     }
 
