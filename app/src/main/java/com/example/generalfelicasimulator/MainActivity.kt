@@ -41,10 +41,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        editTextIDm = findViewById<EditText>(R.id.editTextIDm)
-        editTextSys = findViewById<EditText>(R.id.editTextSys)
+        editTextIDm = findViewById(R.id.editTextIDm)
+        editTextSys = findViewById(R.id.editTextSys)
 
-        tableLayoutCard = findViewById<TableLayout>(R.id.tableLayoutCard)
+        tableLayoutCard = findViewById(R.id.tableLayoutCard)
 
         val btnUpdate = findViewById<Button>(R.id.button_update)
         btnUpdate.setOnClickListener {
