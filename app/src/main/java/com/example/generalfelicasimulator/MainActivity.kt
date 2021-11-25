@@ -26,6 +26,11 @@ class MainActivity : AppCompatActivity() {
     private var nfcFCardEmulation: NfcFCardEmulation? = null
     private var myComponentName: ComponentName? = null
 
+    private lateinit var editTextIDm: EditText
+    private lateinit var editTextSys: EditText
+
+    private lateinit var tableLayoutCard: TableLayout
+
     private val gson = Gson()
     private var cards = mutableListOf<Card>()
 
@@ -35,6 +40,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        editTextIDm = findViewById<EditText>(R.id.editTextIDm)
+        editTextSys = findViewById<EditText>(R.id.editTextSys)
+
+        tableLayoutCard = findViewById<TableLayout>(R.id.tableLayoutCard)
 
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
             Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
@@ -52,8 +62,8 @@ class MainActivity : AppCompatActivity() {
 
         val btnUpdate = findViewById<Button>(R.id.button_update)
         btnUpdate.setOnClickListener {
-            val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
-            val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
+            val idm = editTextIDm.text.toString()
+            val sys = editTextSys.text.toString()
 
             val resultIdm = setIDm(idm)
             val resultSys = setSys(sys)
@@ -82,8 +92,8 @@ class MainActivity : AppCompatActivity() {
 
         val btnSave = findViewById<Button>(R.id.button_save)
         btnSave.setOnClickListener {
-            val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
-            val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
+            val idm = editTextIDm.text.toString()
+            val sys = editTextSys.text.toString()
 
             val editTextName = EditText(this)
             editTextName.hint = "name"
@@ -145,8 +155,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun drawCards() {
-        val tableLayoutCard = findViewById<TableLayout>(R.id.tableLayoutCard)
-
         tableLayoutCard.removeAllViews()
 
         var i = 1
@@ -174,8 +182,8 @@ class MainActivity : AppCompatActivity() {
                     drawCards()
                 }
             tableRowCard.setOnClickListener {
-                findViewById<EditText>(R.id.editTextIDm).setText(card.idm)
-                findViewById<EditText>(R.id.editTextSys).setText(card.sys)
+                editTextIDm.setText(card.idm)
+                editTextSys.setText(card.sys)
             }
 
             tableLayoutCard.addView(
@@ -212,8 +220,8 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        val idm = findViewById<EditText>(R.id.editTextIDm).text.toString()
-        val sys = findViewById<EditText>(R.id.editTextSys).text.toString()
+        val idm = editTextIDm.text.toString()
+        val sys = editTextSys.text.toString()
 
         outState.putString("IDm", idm)
         outState.putString("Sys", sys)
@@ -225,7 +233,7 @@ class MainActivity : AppCompatActivity() {
         val idm = savedInstanceState.getString("IDm")
         val sys = savedInstanceState.getString("Sys")
 
-        findViewById<EditText>(R.id.editTextIDm).setText(idm)
-        findViewById<EditText>(R.id.editTextSys).setText(sys)
+        editTextIDm.setText(idm)
+        editTextSys.setText(sys)
     }
 }
