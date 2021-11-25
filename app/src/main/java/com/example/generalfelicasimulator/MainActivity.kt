@@ -15,7 +15,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
 import java.io.IOException
-import kotlin.system.exitProcess
 
 
 data class Card(val name: String, val idm: String, val sys: String)
@@ -45,20 +44,6 @@ class MainActivity : AppCompatActivity() {
         editTextSys = findViewById<EditText>(R.id.editTextSys)
 
         tableLayoutCard = findViewById<TableLayout>(R.id.tableLayoutCard)
-
-        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
-            Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
-            AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported")
-                .setOnDismissListener { exitProcess(-1) }.show()
-            return
-        }
-
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-        nfcFCardEmulation = NfcFCardEmulation.getInstance(nfcAdapter)
-        myComponentName = ComponentName(
-            "com.example.generalfelicasimulator",
-            "com.example.generalfelicasimulator.HCEFService"
-        )
 
         val btnUpdate = findViewById<Button>(R.id.button_update)
         btnUpdate.setOnClickListener {
@@ -112,6 +97,19 @@ class MainActivity : AppCompatActivity() {
 
         loadCards()
         drawCards()
+
+        if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
+            Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
+            AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported").show()
+            return
+        }
+
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        nfcFCardEmulation = NfcFCardEmulation.getInstance(nfcAdapter)
+        myComponentName = ComponentName(
+            "com.example.generalfelicasimulator",
+            "com.example.generalfelicasimulator.HCEFService"
+        )
     }
 
     private fun setIDm(idm: String): Boolean {
