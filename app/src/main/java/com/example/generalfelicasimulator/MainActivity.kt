@@ -62,13 +62,17 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Updated: $idm $sys", Toast.LENGTH_LONG).show()
             } else {
                 if (!resultIdm) {
-                    Toast.makeText(applicationContext, "Error. Invalid IDm", Toast.LENGTH_LONG)
+                    Toast.makeText(
+                        applicationContext,
+                        "${getString(R.string.error_invalid)} ${getString(R.string.idm)}",
+                        Toast.LENGTH_LONG
+                    )
                         .show()
                 }
                 if (!resultSys) {
                     Toast.makeText(
                         applicationContext,
-                        "Error. Invalid System Code",
+                        "${getString(R.string.error_invalid)} ${getString(R.string.system_code)}",
                         Toast.LENGTH_LONG
                     )
                         .show()
