@@ -56,23 +56,22 @@ class MainActivity : AppCompatActivity() {
 
             if (resultIdm && resultSys) {
                 Toast.makeText(applicationContext, "Updated: $idm $sys", Toast.LENGTH_LONG).show()
-            } else {
-                if (!resultIdm) {
-                    Toast.makeText(
-                        applicationContext,
-                        "${getString(R.string.error_invalid)} ${getString(R.string.idm)}",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
-                }
-                if (!resultSys) {
-                    Toast.makeText(
-                        applicationContext,
-                        "${getString(R.string.error_invalid)} ${getString(R.string.system_code)}",
-                        Toast.LENGTH_LONG
-                    )
-                        .show()
-                }
+            }
+            if (!resultIdm) {
+                Toast.makeText(
+                    applicationContext,
+                    "${getString(R.string.error_invalid)} ${getString(R.string.idm)}",
+                    Toast.LENGTH_LONG
+                )
+                    .show()
+            }
+            if (!resultSys) {
+                Toast.makeText(
+                    applicationContext,
+                    "${getString(R.string.error_invalid)} ${getString(R.string.system_code)}",
+                    Toast.LENGTH_LONG
+                )
+                    .show()
             }
         }
 
