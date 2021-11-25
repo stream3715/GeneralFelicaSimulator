@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity() {
             var name = card.name
 
             if (name == "") {
-                name = "Untitled"
+                name = getString(R.string.untitled)
                 if (i > 1) {
                     name += " $i"
                 }
