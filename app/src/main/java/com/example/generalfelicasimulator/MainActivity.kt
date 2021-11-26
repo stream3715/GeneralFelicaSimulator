@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
             Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
             AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported").show()
+            btnUpdate.isEnabled = false
             return
         }
 
