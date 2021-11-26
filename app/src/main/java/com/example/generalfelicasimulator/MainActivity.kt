@@ -178,7 +178,7 @@ class MainActivity : AppCompatActivity() {
             tableRowCard.findViewById<TextView>(R.id.card_sys).text = card.sys
             tableRowCard.findViewById<ImageButton>(R.id.card_delete)
                 .setOnClickListener {
-                    cards.removeAt(cards.indexOf(card))
+                    cards.remove(card)
                     saveCards()
                     drawCards()
                 }
