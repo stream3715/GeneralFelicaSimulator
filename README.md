@@ -1,6 +1,8 @@
 # GeneralFelicaSimulator
 Simulate Felica Generally. (IDm and System code Only)
 
+![GFS_1_2](img/Screenshot_1_2.png)
+
 # LICENSE
 This software includes the work that is distributed in the Apache License 2.0.
 
