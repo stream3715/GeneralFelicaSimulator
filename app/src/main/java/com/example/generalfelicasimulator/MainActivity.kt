@@ -18,7 +18,7 @@ import java.io.File
 import java.io.IOException
 
 
-data class Card(val name: String, val idm: String, val sys: String)
+internal data class Card(val name: String, val idm: String, val sys: String)
 
 
 class MainActivity : AppCompatActivity() {
@@ -100,11 +100,19 @@ class MainActivity : AppCompatActivity() {
 
         if (!packageManager.hasSystemFeature(PackageManager.FEATURE_NFC_HOST_CARD_EMULATION_NFCF)) {
             Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
-            AlertDialog.Builder(this).setTitle("Error").setMessage("HCE-F is not supported").show()
+            AlertDialog.Builder(this)
+                .setTitle("Error").setMessage("HCE-F is not supported").setCancelable(false).show()
             return
         }
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        if (nfcAdapter == null) {
+            Log.e("GeneralFelicaSimulator", "NFC is off")
+            AlertDialog.Builder(this)
+                .setTitle("Error").setMessage("NFC is off").setCancelable(false).show()
+            return
+        }
+
         nfcFCardEmulation = NfcFCardEmulation.getInstance(nfcAdapter)
         myComponentName = ComponentName(
             "com.example.generalfelicasimulator",
