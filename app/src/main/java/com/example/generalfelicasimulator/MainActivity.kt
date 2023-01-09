@@ -106,7 +106,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-        if (nfcAdapter == null) {
+        if (nfcAdapter?.isEnabled != true) {
             Log.e("GeneralFelicaSimulator", "NFC is off")
             AlertDialog.Builder(this)
                 .setTitle("Error").setMessage("NFC is off").setCancelable(false).show()
