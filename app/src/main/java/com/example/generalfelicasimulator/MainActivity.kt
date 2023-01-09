@@ -177,9 +177,16 @@ class MainActivity : AppCompatActivity() {
             tableRowCard.findViewById<TextView>(R.id.card_sys).text = card.sys
             tableRowCard.findViewById<ImageButton>(R.id.card_delete)
                 .setOnClickListener {
-                    cards.removeAt(cards.indexOf(card))
-                    saveCards()
-                    drawCards()
+                    AlertDialog.Builder(this).apply {
+                        title = "Confirm"
+                        setMessage("delete card?")
+                        setPositiveButton("OK") { _, _ ->
+                            cards.removeAt(cards.indexOf(card))
+                            saveCards()
+                            drawCards()
+                        }
+                        setNegativeButton("NO") { _, _ -> }
+                    }.show()
                 }
             tableRowCard.setOnClickListener {
                 editTextIDm.setText(card.idm)
