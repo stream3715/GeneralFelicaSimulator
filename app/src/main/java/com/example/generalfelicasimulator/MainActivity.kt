@@ -186,7 +186,7 @@ class MainActivity : AppCompatActivity() {
             tableRowCard.findViewById<ImageButton>(R.id.card_delete)
                 .setOnClickListener {
                     AlertDialog.Builder(this).apply {
-                        title = "Confirm"
+                        setTitle("Confirm")
                         setMessage("delete card?")
                         setPositiveButton("OK") { _, _ ->
                             cards.removeAt(cards.indexOf(card))
