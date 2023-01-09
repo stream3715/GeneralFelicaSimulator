@@ -1,24 +1,23 @@
 # GeneralFelicaSimulator
 
-Simulate Felica Generally. (IDm and System code Only)
+Generally simulate IDm and System code as FeliCa.
 
 ![GFS_1_2](img/Screenshot_1_2.png)
 
-# LICENSE
-
-This software includes the work that is distributed in the Apache License 2.0.
-
 # Can I Execute This App?
 
-[HCEFChecker][3]
+Use [HCEFChecker][3] to determine whether the device has emulation feature.
 
-# Restrictions for UnUnLocked Device (almost all)
+# Restrictions
+
+Without HCE-F unlocking, only these parameters can be set.
+(where X is 0 to F)
 
 IDm: `2FEXXXXXXXXXXX`
 
 System Code: `4XXX` (except `4XFF`s)
 
-Reference: HCE-F Guideline Chapter 2.4
+rf. HCE-F Guideline Chapter 2.4
 
 [Host-based Card Emulation for NFC-F Application Development Guidelines (Sony)][5]
 
@@ -26,7 +25,11 @@ Reference: HCE-F Guideline Chapter 2.4
 
 # How to Unlock HCE-F
 
-Xposed Module [HCEFUnlocker][10] (Need Root)
+If rooted, the Xposed Module [HCEFUnlocker][10] could unlock the restrictions.
+
+# LICENSE
+
+This software includes the work that is distributed under the Apache License 2.0.
 
 [3]: https://github.com/OLIET2357/HCEFChecker/releases
 [5]: https://www.sony.net/Products/felica/business/tech-support/data/M1053_Host-Based_Card_Emulation_for_NFC-F_Guideline_1.02e.pdf
