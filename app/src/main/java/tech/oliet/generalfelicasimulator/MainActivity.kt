@@ -104,6 +104,7 @@ class MainActivity : AppCompatActivity() {
             Log.e("GeneralFelicaSimulator", "HCE-F is not supported")
             AlertDialog.Builder(this)
                 .setTitle("Error").setMessage("HCE-F is not supported").setCancelable(false).show()
+            btnUpdate.isEnabled = false
             return
         }
 
@@ -191,7 +192,7 @@ class MainActivity : AppCompatActivity() {
                         setTitle("Confirm")
                         setMessage("delete card?")
                         setPositiveButton("OK") { _, _ ->
-                            cards.removeAt(cards.indexOf(card))
+                            cards.remove(card)
                             saveCards()
                             drawCards()
                         }
