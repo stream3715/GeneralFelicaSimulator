@@ -1,4 +1,4 @@
-package com.example.generalfelicasimulator
+package tech.oliet.generalfelicasimulator
 
 import android.nfc.cardemulation.HostNfcFService
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.example.generalfelicasimulator
+package tech.oliet.generalfelicasimulator
 
 import org.junit.Test
 

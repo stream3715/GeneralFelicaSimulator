@@ -1,4 +1,4 @@
-package com.example.generalfelicasimulator
+package tech.oliet.generalfelicasimulator
 
 import android.app.AlertDialog
 import android.content.ComponentName
@@ -115,8 +115,8 @@ class MainActivity : AppCompatActivity() {
 
         nfcFCardEmulation = NfcFCardEmulation.getInstance(nfcAdapter)
         myComponentName = ComponentName(
-            "com.example.generalfelicasimulator",
-            "com.example.generalfelicasimulator.HCEFService"
+            "tech.oliet.generalfelicasimulator",
+            "tech.oliet.generalfelicasimulator.HCEFService"
         )
     }
 

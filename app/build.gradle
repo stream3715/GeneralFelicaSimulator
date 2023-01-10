@@ -7,7 +7,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.generalfelicasimulator"
+        applicationId "tech.oliet.generalfelicasimulator"
         minSdk 24
         targetSdk 31
         versionCode 1
@@ -29,7 +29,7 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    namespace 'com.example.generalfelicasimulator'
+    namespace 'tech.oliet.generalfelicasimulator'
 }
 
 dependencies {
