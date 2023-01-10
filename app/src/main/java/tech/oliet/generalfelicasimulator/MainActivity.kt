@@ -90,6 +90,8 @@ class MainActivity : AppCompatActivity() {
                 .setPositiveButton("OK") { _, _ ->
                     addCard(Card(editTextName.text.toString(), idm, sys))
                 }
+                .setNegativeButton("cancel") { _, _ -> }
+                .setCancelable(false)
                 .show()
         }
 
