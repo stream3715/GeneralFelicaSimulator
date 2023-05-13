@@ -1,7 +1,9 @@
 package tech.oliet.generalfelicasimulator
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.ComponentName
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.nfc.cardemulation.NfcFCardEmulation
@@ -10,7 +12,9 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
@@ -36,6 +40,18 @@ class MainActivity : AppCompatActivity() {
 
     private val jsonPath = "cards.json"
     private lateinit var jsonFile: File
+    private var requestingLocationUpdates = false
+
+    private val requestPermissionLauncher = registerForActivityResult<String, Boolean>(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        //⑦ ユーザーが権限を許可したか
+        if (isGranted) {
+            //⑧a 制限された機能にアクセスする
+            requestingLocationUpdates = true
+        } else {
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,6 +122,44 @@ class MainActivity : AppCompatActivity() {
                 .setTitle("Error").setMessage("HCE-F is not supported").setCancelable(false).show()
             btnUpdate.isEnabled = false
             return
+        }
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.NFC
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+
+            //⑧a 制限された機能にアクセスする
+            requestingLocationUpdates = true
+        } else if (ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.NFC
+            )
+        ) {
+            val builder = AlertDialog.Builder(this)
+
+            fun toastMake(str: String) {
+                val toast = Toast.makeText(this, str, Toast.LENGTH_SHORT)
+                toast.show()
+            }
+
+            //⑤b 権限が必要な理由・メリットを説明
+            builder.setMessage("hoge")
+                .setPositiveButton("OK",
+                    DialogInterface.OnClickListener { dialog: DialogInterface?, id: Int ->
+                        requestPermissionLauncher.launch(
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        )
+                    })
+                .setNegativeButton("no_thanks") { dialog, id -> toastMake("fuga") }
+            builder.create()
+            builder.show()
+        } else {
+            //⑥ システム権限を要求する
+            requestPermissionLauncher.launch(
+                Manifest.permission.NFC
+            )
         }
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
