@@ -2,8 +2,8 @@
     <string name="app_name">GeneralFelicaSimulator</string>
     <string name="service_desc">Simulate Felica Generally</string>
     <string name="ununlocked_notice">This device is not Unlocked.</string>
-    <string name="default_idm">02FE000000000000</string>
-    <string name="default_sys">4000</string>
+    <string name="default_idm">0114C7480B210A10</string>
+    <string name="default_sys">8AC3</string>
     <string name="idm">IDm</string>
     <string name="sys">Sys</string>
     <string name="system_code">System Code</string>

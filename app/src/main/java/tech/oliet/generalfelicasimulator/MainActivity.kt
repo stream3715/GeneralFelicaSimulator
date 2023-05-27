@@ -273,7 +273,7 @@ class MainActivity : AppCompatActivity() {
 
         val orgSys = nfcFCardEmulation?.getSystemCodeForService(myComponentName)
 
-        if (setSys("1234")) {
+        if (setSys("8AC3")) {
             findViewById<TextView>(R.id.textViewNoticeUnUnlocked).visibility = View.INVISIBLE
         }
 

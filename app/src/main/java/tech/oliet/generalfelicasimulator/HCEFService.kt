@@ -3,8 +3,8 @@ package tech.oliet.generalfelicasimulator
 import android.nfc.cardemulation.HostNfcFService
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import tech.oliet.generalfelicasimulator.ByteTool.Companion.b
+import java.lang.RuntimeException
 
 const val PACKET_LENGTH_POS = 0
 const val PACKET_LENGTH_SIZE = 1
@@ -61,7 +61,6 @@ class HCEFService : HostNfcFService() {
     override fun onCreate() {
         Log.d("HCEFService(NFC-F)", "onCreate")
         super.onCreate()
-        Toast.makeText(this, "onCreate", Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {
@@ -71,7 +70,6 @@ class HCEFService : HostNfcFService() {
 
     override fun processNfcFPacket(commandPacket: ByteArray, extras: Bundle?): ByteArray? {
         Log.d("HCEFService(NFC-F)", "processNfcFPacket: Received NFC-F")
-        Toast.makeText(this, "processNfcFPacket", Toast.LENGTH_LONG).show()
 
         //必須情報より小さいならエラー
         if (commandPacket.size < PACKET_LENGTH_SIZE + COMMAND_TYPE_SIZE + IDM_SIZE) {
@@ -80,10 +78,8 @@ class HCEFService : HostNfcFService() {
         }
 
         return when (commandPacket[COMMAND_TYPE_POS]) {
-            CMD_POLLING -> ByteArray(0) //stub
-//            CMD_READ_WITHOUT_ENCRYPTION -> readWithoutEncryption(commandPacket) //stub
-            CMD_READ_WITHOUT_ENCRYPTION -> requestSystemCode(commandPacket) //stub
-            CMD_REQUEST_SYSTEM_CODE -> requestSystemCode(commandPacket)
+            CMD_POLLING -> ByteArray(0)
+            CMD_READ_WITHOUT_ENCRYPTION -> readWithoutEncryption(commandPacket)
             else -> ByteArray(0) //該当コマンドなし
         }
     }
@@ -96,12 +92,15 @@ class HCEFService : HostNfcFService() {
         }
     }
 
-    private fun readWithoutEncryption(commandPacket: ByteArray): ByteArray {
+    public fun readWithoutEncryption(commandPacket: ByteArray): ByteArray {
+        if (commandPacket.size < 16) throw RuntimeException()
+        val blockCnt = commandPacket[13].toInt() and 0xFF
+
         Log.d("HCEFService(NFC-F)", "ReadWithoutEncryption")
         Log.d("HCEFService(NFC-F)", commandPacket.toHex())
-        //response
+        // response
         val len =
-            PACKET_LENGTH_SIZE + RESPONSE_SIZE + IDM_SIZE + STATUS_FLAG1_SIZE + STATUS_FLAG2_SIZE + BLOCK_NUM_SIZE + BLOCK_SIZE
+            PACKET_LENGTH_SIZE + RESPONSE_SIZE + IDM_SIZE + STATUS_FLAG1_SIZE + STATUS_FLAG2_SIZE + BLOCK_NUM_SIZE + blockCnt * BLOCK_SIZE
         val headLen =
             PACKET_LENGTH_SIZE + RESPONSE_SIZE + IDM_SIZE + STATUS_FLAG1_SIZE + STATUS_FLAG2_SIZE
         var responsePacket: ByteArray? = ByteArray(len)
@@ -109,7 +108,7 @@ class HCEFService : HostNfcFService() {
         responsePacket[COMMAND_TYPE_POS] = RES_READ_WITHOUT_ENCRYPTION
         responsePacket[headLen - 2] = STATUS_FLAG1_SUCCESS
         responsePacket[headLen - 1] = STATUS_FLAG2_SUCCESS
-        responsePacket[headLen] = ONE_BLOCK.toByte()
+        responsePacket[headLen] = blockCnt.toByte()
 
         //IDmをセット
         responsePacket = setIDmToPacket(responsePacket, getIDm(commandPacket))
@@ -131,53 +130,47 @@ class HCEFService : HostNfcFService() {
             Log.d("HCEFService(NFC-F)", "STATUS_FLAG2_SERVICE_CODE")
             return responsePacket //ERROR RES
         }
-        val blockNum = commandPacket[13].toInt() and 0xFF
-        if (blockNum != 1) {
-            responsePacket[len - 2] = STATUS_FLAG1_FAILED
-            responsePacket[len - 1] = STATUS_FLAG2_BLOCK_NUM_ERROR
-            Log.d("HCEFService(NFC-F)", "BLOCK_NUM_ERROR")
-            return responsePacket //ERROR RES
-        }
-        val blockAddress: Int
-        when (commandPacket[14].toInt() and 0xFF) {
-            0x80 -> {
-                //1byte
-                blockAddress = commandPacket[15].toInt() and 0xFF
-            }
 
-            0x00 -> {
-                //2byte
-                blockAddress =
-                    commandPacket[15].toInt() and 0xFF or (commandPacket[16].toInt() and 0xFF shl 8)
-            }
+        val key = HashMap<Int, ByteArray>()
+        key.put(0, "30313030303035313233453030313530".decodeHex())
+        key.put(7, "30313031353130303031000000000000".decodeHex())
+        key.put(8, "35313031303530300000000000000000".decodeHex())
 
-            else -> {
-                responsePacket[len - 2] = STATUS_FLAG1_FAILED
-                responsePacket[len - 1] = STATUS_FLAG2_ACCESS_MODE
-                Log.d("HCEFService(NFC-F)", "SERVICE_NUM_ERROR")
-                return responsePacket //ERROR RES
+        var readIndex = 14
+        for (i in 0 until blockCnt) {
+            val blockAddress: Int
+            when (commandPacket[readIndex++].toInt() and 0xFF) {
+                0x80 -> {
+                    //1byte
+                    blockAddress = commandPacket[readIndex++].toInt() and 0xFF
+                }
+
+                0x00 -> {
+                    //2byte
+                    blockAddress =
+                        commandPacket[readIndex++].toInt() and 0xFF or (commandPacket[readIndex++].toInt() and 0xFF shl 8)
+                }
+
+                else -> {
+                    responsePacket[len - 2] = STATUS_FLAG1_FAILED
+                    responsePacket[len - 1] = STATUS_FLAG2_ACCESS_MODE
+                    Log.d("HCEFService(NFC-F)", "SERVICE_NUM_ERROR")
+                    return responsePacket //ERROR RES
+                }
             }
+            Log.d("HCEFService(NFC-F)", String.format("Block Address : %04X,", blockAddress))
+
+            val data =
+                key.getOrElse(blockAddress) { "00000000000000000000000000000000".decodeHex() }
+            System.arraycopy(
+                data,
+                0,
+                responsePacket,
+                headLen + 1 + (i * BLOCK_SIZE),
+                BLOCK_SIZE
+            )
         }
-        Log.d("HCEFService(NFC-F)", String.format("Block Address : %04X,", blockAddress))
-        val data = byteArrayOf(
-            0x00,
-            0x01,
-            0x02,
-            0x03,
-            0x04,
-            0x05,
-            0x06,
-            0x07,
-            0x08,
-            0x09,
-            0x0A,
-            0x0B,
-            0x0C,
-            0x0D,
-            0x0E,
-            0x0F
-        )
-        System.arraycopy(data, 0, responsePacket, headLen + BLOCK_NUM_SIZE, BLOCK_SIZE)
+
         var debug = ""
         for (i in responsePacket.indices) {
             debug += String.format("%02X,", responsePacket[i])
@@ -190,7 +183,7 @@ class HCEFService : HostNfcFService() {
     /*
      * LEN_OF_RES, CMD, IDM[8], COUNT(SYS), Array<Service>
      */
-    private fun requestSystemCode(commandPacket: ByteArray): ByteArray? {
+    private fun requestSystemCode(commandPacket: ByteArray): ByteArray {
         Log.d("HCEFService(NFC-F)", "RequestSystemCode")
         Log.d("HCEFService(NFC-F)", commandPacket.toHex())
         //response
@@ -236,5 +229,13 @@ class HCEFService : HostNfcFService() {
     private fun setIDmToPacket(packet: ByteArray, IDm: ByteArray): ByteArray {
         System.arraycopy(IDm, 0, packet, IDM_POS, IDM_SIZE) // NFC-ID2
         return packet
+    }
+
+    private fun String.decodeHex(): ByteArray {
+        check(length % 2 == 0) { "Must have an even length" }
+
+        return chunked(2)
+            .map { it.toInt(16).toByte() }
+            .toByteArray()
     }
 }
